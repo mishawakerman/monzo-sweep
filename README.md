@@ -1,6 +1,6 @@
-## Usage
+# Monzo Sweep
 
-This script allows you to manage your Monzo account balance by automatically transferring money between your main account and a specified savings pot.
+A script that allows you to manage your Monzo account balance by automatically transferring money between your main account and a specified savings pot to maintain a desired balance. And a GitHub Actions worker to run this script nightly.
 
 ### Prerequisites
 
@@ -51,7 +51,7 @@ Run the script using the following command:
 python main.py --pot "Your Pot Name" --balance 15000
 ```
 
-This example will aim to maintain a balance of £150 in your main account, moving excess funds to the specified pot or withdrawing from it if the balance falls below £1,500.
+This example will aim to maintain a balance of £150 in your main account, moving excess funds to the specified pot or withdrawing from it if the balance falls below £150.
 
 ### Examples
 
@@ -76,6 +76,48 @@ This example will aim to maintain a balance of £150 in your main account, movin
 - If you encounter authentication errors, ensure your Monzo API access token is correct and hasn't expired.
 - If the script can't find your account, try specifying the `MONZO_ACCOUNT_ID` in the `.env` file.
 - For any other issues, check the error messages in the console output for guidance.
+
+## Automated Nightly Sweep
+
+This repository is set up with a GitHub Action that runs the sweep script nightly. Here's what you need to know:
+
+- The script runs automatically at 1 AM UTC every day.
+- It uses secrets and variables stored in the GitHub repository to access your Monzo account and perform the sweep.
+- You can also trigger the workflow manually from the "Actions" tab in the GitHub repository.
+
+### Setting up the GitHub Action
+
+1. Ensure your repository has the following secrets set up:
+   - `MONZO_ACCESS_TOKEN`: Your Monzo API access token
+   - (optional) `MONZO_ACCOUNT_ID`: Your Monzo account ID
+
+2. Set up the following repository variables:
+   - `MONZO_POT_NAME`: The name of your savings pot
+   - `MONZO_DESIRED_BALANCE`: Your desired balance in pence
+
+3. The GitHub Action is defined in `.github/workflows/nightly-balance-check.yml`.
+
+4. You can modify the schedule in the workflow file if you want the script to run at a different time.
+
+### Updating Pot Name or Desired Balance
+
+To update the pot name or desired balance:
+
+1. Go to your GitHub repository
+2. Click on "Settings" > "Secrets and variables" > "Actions"
+3. Click on the "Variables" tab
+4. Edit the `MONZO_POT_NAME` or `MONZO_DESIRED_BALANCE` variable as needed
+
+These variables can be updated without modifying the workflow file, making it easier to adjust your balance management strategy.
+
+### Monitoring the Automated Runs
+
+- You can view the results of each run in the "Actions" tab of your GitHub repository.
+- If there are any issues with the script execution, you'll see a failed workflow run.
+
+### Security Note
+
+Remember that the GitHub Action uses your Monzo API token to access your account. Ensure that you don't share your GitHub secrets with anyone unauthorized. While the pot name and desired balance are stored as variables and are less sensitive, consider the privacy implications of making this information visible to repository collaborators.
 
 ### Safety and Security
 
